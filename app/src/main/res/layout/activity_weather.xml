@@ -11,13 +11,13 @@
         android:id="@+id/tv_city_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="60dp"
         android:text="@string/city_name"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sv" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_current_temp"
@@ -38,7 +38,6 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.53"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_weather_desc" />
 
@@ -51,19 +50,16 @@
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_current_temp" />
+        app:layout_constraintTop_toBottomOf="@+id/weather_icon" />
 
-    <SearchView
-        android:id="@+id/sv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:commitIcon="@drawable/search"
-        android:iconifiedByDefault="true"
-        android:padding="4dp"
-        android:queryHint="@string/search_bar"
+    <ImageView
+        android:id="@+id/weather_icon"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_current_temp"
+        app:srcCompat="@drawable/warning" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
