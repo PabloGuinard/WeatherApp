@@ -81,11 +81,11 @@ class WeatherActivity : AppCompatActivity() {
                 val main = response.getJSONObject("main")
 
                 cityTv.text = response.getString("name")
-                currentTempTv.text = main.getString("temp") + "°C"
+                currentTempTv.text = main.getString("temp").dropLast(2) + "°C"
                 weatherDescTv.text = weather.getString("description")
                     .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
                 minMaxTempTv.text =
-                    "Min. " + main.getString("temp_min") + "°C Max. " + main.getString("temp_max") + "°C"
+                    "Min. " + main.getString("temp_min").dropLast(2) + "°C Max. " + main.getString("temp_max").dropLast(2) + "°C"
 
             }
         }
