@@ -38,7 +38,7 @@ class WeatherActivity : AppCompatActivity() {
                 val inputSystem = connection.inputStream
                 val inputStreamReader = InputStreamReader(inputSystem, "UTF-8")
                 val response = JSONObject(inputStreamReader.readText())
-                Log.e("response : ", response.toString())
+                updateUITodayWeather(response)
                 inputStreamReader.close()
                 inputSystem.close()
             } else {
@@ -47,4 +47,26 @@ class WeatherActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateUITodayWeather(response: JSONObject) {
+        runOnUiThread {
+            kotlin.run {
+                val cityTv = findViewById<TextView>(R.id.tv_city_name)
+                val currentTempTv = findViewById<TextView>(R.id.tv_current_temp)
+                val weatherDescTv = findViewById<TextView>(R.id.tv_weather_desc)
+                val minMaxTempTv = findViewById<TextView>(R.id.tv_min_max_temp)
+
+                val weather = response.getJSONArray("weather")[0] as JSONObject
+                val main = response.getJSONObject("main")
+
+                cityTv.text = response.getString("name")
+                currentTempTv.text = main.getString("temp")
+                weatherDescTv.text = weather.getString("description")
+                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } + "°C"
+                minMaxTempTv.text =
+                    "Min. " + main.getString("temp_min") + "°C Max. " + main.getString("temp_max") + "°C"
+
+            }
+        }
+
+    }
 }
