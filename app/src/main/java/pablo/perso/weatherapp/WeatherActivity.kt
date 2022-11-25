@@ -1,17 +1,23 @@
 package pablo.perso.weatherapp
 
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.JsonReader
 import android.util.Log
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
-import java.net.URL
+import java.io.InputStream
 import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
 import java.util.*
 import javax.net.ssl.HttpsURLConnection
 
+
 private const val APP_ID = "e3e837e5209e992789a2b21059048d7d"
+private val ICON_URL = arrayOf("https://openweathermap.org/img/wn/", "@2x.png")
 
 class WeatherActivity : AppCompatActivity() {
 
@@ -38,7 +44,20 @@ class WeatherActivity : AppCompatActivity() {
                 val inputSystem = connection.inputStream
                 val inputStreamReader = InputStreamReader(inputSystem, "UTF-8")
                 val response = JSONObject(inputStreamReader.readText())
-                updateUITodayWeather(response)
+
+                val urlIcon = URL(ICON_URL.get(0) + (response.getJSONArray("weather")[0] as JSONObject).getString("icon") + ICON_URL.get(1))
+
+                val connectionIcon = urlIcon.openConnection() as HttpsURLConnection
+                if(connection.responseCode == 200){
+                    val inputStreamIcon = connectionIcon.inputStream
+                    val bmp = BitmapFactory.decodeStream(inputStreamIcon)
+
+                    updateUITodayWeather(response, bmp)
+                } else {
+                    //TODO
+                }
+
+
                 inputStreamReader.close()
                 inputSystem.close()
             } else {
@@ -47,13 +66,16 @@ class WeatherActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateUITodayWeather(response: JSONObject) {
+    private fun updateUITodayWeather(response: JSONObject, bmp :Bitmap) {
         runOnUiThread {
             kotlin.run {
                 val cityTv = findViewById<TextView>(R.id.tv_city_name)
                 val currentTempTv = findViewById<TextView>(R.id.tv_current_temp)
                 val weatherDescTv = findViewById<TextView>(R.id.tv_weather_desc)
                 val minMaxTempTv = findViewById<TextView>(R.id.tv_min_max_temp)
+
+                val weatherIcon = findViewById<ImageView>(R.id.weather_icon)
+                weatherIcon.setImageBitmap(bmp)
 
                 val weather = response.getJSONArray("weather")[0] as JSONObject
                 val main = response.getJSONObject("main")
