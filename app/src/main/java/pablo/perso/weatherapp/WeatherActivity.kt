@@ -79,6 +79,7 @@ class WeatherActivity : AppCompatActivity() {
                 val currentTempTv = findViewById<TextView>(R.id.tv_current_temp)
                 val weatherDescTv = findViewById<TextView>(R.id.tv_weather_desc)
                 val minMaxTempTv = findViewById<TextView>(R.id.tv_min_max_temp)
+                val feelsLikeTv = findViewById<TextView>(R.id.feels_like_tv)
 
                 val weatherIcon = findViewById<ImageView>(R.id.weather_icon)
                 weatherIcon.setImageBitmap(bmp)
@@ -92,7 +93,7 @@ class WeatherActivity : AppCompatActivity() {
                     .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
                 minMaxTempTv.text =
                     "Max. " + main.getString("temp_max").dropLast(3) + "°C Min. " + main.getString("temp_min").dropLast(3) + "°C"
-
+                feelsLikeTv.text = getString(R.string.feels_like) + " " + main.getString("feels_like").dropLast(3) + "°C"
             }
         }
 

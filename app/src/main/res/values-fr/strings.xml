@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WeatherApp</string>
+    <string name="city_name">Ville</string>
+    <string name="weather_desc">Description</string>
+    <string name="min_max_temp">Min. Max.</string>
+    <string name="search_bar">Cherchez une ville</string>
+    <string name="weather_title">Météo</string>
+    <string name="feels_like">Ressenti</string>
+</resources>

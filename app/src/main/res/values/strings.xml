@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">WeatherApp</string>
-    <string name="city_name">Genouilleux</string>
-    <string name="weather_desc">Nuages prédominants</string>
-    <string name="min_max_temp">Min.4° Max.11°</string>
-    <string name="current_temp">8°</string>
+    <string name="city_name">City</string>
+    <string name="weather_desc">Description</string>
+    <string name="min_max_temp">Min. Max.</string>
+    <string name="current_temp"></string>
     <string name="search_bar">Search for a city</string>
     <string name="weather_title">Weather</string>
+    <string name="feels_like">Feels like</string>
 </resources>
