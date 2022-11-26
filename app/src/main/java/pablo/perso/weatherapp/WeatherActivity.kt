@@ -32,7 +32,7 @@ private val ICON_URL = arrayOf("https://openweathermap.org/img/wn/", "@2x.png")
 
 class WeatherActivity : AppCompatActivity() {
 
-    private val city = "londres"
+    private val city = "london"
     private val lang = "fr"
     private val unit = "metric"
 
@@ -146,7 +146,7 @@ class WeatherActivity : AppCompatActivity() {
                 val weather = current.getJSONArray("weather")[0] as JSONObject
                 val main = current.getJSONObject("main")
 
-                cityTv.text = current.getString("name")
+                cityTv.text = current.getString("name") + " " + current.getJSONObject("sys").getString("country")
                 currentTempTv.text = main.getDouble("temp").roundToInt().toString() + "°C"
                 weatherDescTv.text = weather.getString("description")
                     .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
