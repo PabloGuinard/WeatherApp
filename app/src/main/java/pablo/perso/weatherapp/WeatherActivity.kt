@@ -113,13 +113,8 @@ class WeatherActivity : AppCompatActivity() {
                 minMaxTempTv.text =
                     "Max. " + main.getString("temp_max").dropLast(3) + "°C Min. " + main.getString("temp_min").dropLast(3) + "°C"
                 feelsLikeTv.text = getString(R.string.feels_like) + " " + main.getString("feels_like").dropLast(3) + "°C"
-
-                Log.e( "updateUITodayWeather: ", current.getInt("dt").toString())
+                
                 val simpleDateFormat = SimpleDateFormat("dd MMM HH:mm")
-
-
-
-                // val date = Date(current.getLong("dt") * 1000, simpleDateFormat)
                 timeTv.text = simpleDateFormat.format(current.getInt("dt") * 1000L + 3600000)
 
             }
