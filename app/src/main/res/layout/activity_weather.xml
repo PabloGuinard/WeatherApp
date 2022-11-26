@@ -8,27 +8,39 @@
     tools:context=".WeatherActivity">
 
     <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="20dp"
+        android:text="@string/time"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_city_name" />
+
+    <TextView
         android:id="@+id/tv_city_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="20dp"
         android:text="@string/city_name"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_current_temp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingTop="100dp"
         android:text="@string/current_temp"
         android:textAppearance="@style/TextAppearance.AppCompat.Display3"
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_city_name" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_min_max_temp"
@@ -37,6 +49,7 @@
         android:text="@string/min_max_temp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textColor="#FFFFFF"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_weather_desc" />
@@ -48,6 +61,7 @@
         android:text="@string/weather_desc"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textColor="#FFFFFF"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/weather_icon" />
@@ -59,11 +73,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/feels_like_tv"
+        app:layout_constraintTop_toBottomOf="@+id/tv_feels_like"
         app:srcCompat="@drawable/warning" />
 
     <TextView
-        android:id="@+id/feels_like_tv"
+        android:id="@+id/tv_feels_like"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/feels_like"

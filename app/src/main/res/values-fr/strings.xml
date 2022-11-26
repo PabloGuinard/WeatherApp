@@ -7,4 +7,6 @@
     <string name="search_bar">Cherchez une ville</string>
     <string name="weather_title">Météo</string>
     <string name="feels_like">Ressenti</string>
+    <string name="time">00h00</string>
+    <string name="current_temp">0°</string>
 </resources>
