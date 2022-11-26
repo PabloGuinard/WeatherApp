@@ -128,7 +128,6 @@ class WeatherActivity : AppCompatActivity() {
                 val cityTv = findViewById<TextView>(R.id.tv_city_name)
                 val currentTempTv = findViewById<TextView>(R.id.tv_current_temp)
                 val weatherDescTv = findViewById<TextView>(R.id.tv_weather_desc)
-                val minMaxTempTv = findViewById<TextView>(R.id.tv_min_max_temp)
                 val feelsLikeTv = findViewById<TextView>(R.id.tv_feels_like)
                 val timeTv = findViewById<TextView>(R.id.tv_time)
 
@@ -142,9 +141,6 @@ class WeatherActivity : AppCompatActivity() {
                 currentTempTv.text = main.getDouble("temp").roundToInt().toString() + "°C"
                 weatherDescTv.text = weather.getString("description")
                     .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
-                minMaxTempTv.text = "Max. " + main.getDouble("temp_max").roundToInt()
-                    .toString() + "°C Min. " + main.getDouble("temp_min").roundToInt()
-                    .toString() + "°C"
                 feelsLikeTv.text =
                     getString(R.string.feels_like) + " " + main.getDouble("feels_like").roundToInt()
                         .toString() + "°C"
@@ -168,6 +164,12 @@ class WeatherActivity : AppCompatActivity() {
                 val iconsArray = getForecastIcons()
 
                 val list = forecast.getJSONArray("list")
+
+                val minMaxTempTv = findViewById<TextView>(R.id.tv_min_max_temp)
+                minMaxTempTv.text = "Max. " + (list[0] as JSONObject).getJSONObject("temp").getDouble("max").roundToInt()
+                    .toString() + "°C Min. " + (list[0] as JSONObject).getJSONObject("temp").getDouble("min").roundToInt()
+                    .toString() + "°C"
+
                 list.remove(0)
 
                 for (i in 0..6) {
