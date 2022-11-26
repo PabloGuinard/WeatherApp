@@ -1,5 +1,6 @@
 package pablo.perso.weatherapp
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -38,9 +39,13 @@ class WeatherActivity : AppCompatActivity() {
                 "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=" + unit + "&cnt=7&appid=" + APP_ID + "&lang=" + lang
             )
             val connection = url.openConnection() as HttpsURLConnection
+            val urlForecast = URL(
+                "https://api.openweathermap.org/data/2.5/forecast/daily?q=" + city + "&units=" + unit + "&cnt=7&appid=" + APP_ID + "&lang=" + lang
+            )
+            val connectionForecast = urlForecast.openConnection() as HttpsURLConnection
 
 
-            if (connection.responseCode == 200) {
+            if (connection.responseCode == 200 && connectionForecast.responseCode == 200) {
                 val inputSystem = connection.inputStream
                 val inputStreamReader = InputStreamReader(inputSystem, "UTF-8")
                 val response = JSONObject(inputStreamReader.readText())
@@ -66,6 +71,7 @@ class WeatherActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateUITodayWeather(response: JSONObject, bmp :Bitmap) {
         runOnUiThread {
             kotlin.run {
@@ -81,11 +87,11 @@ class WeatherActivity : AppCompatActivity() {
                 val main = response.getJSONObject("main")
 
                 cityTv.text = response.getString("name")
-                currentTempTv.text = main.getString("temp").dropLast(2) + "°C"
+                currentTempTv.text = main.getString("temp").dropLast(3) + "°C"
                 weatherDescTv.text = weather.getString("description")
                     .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
                 minMaxTempTv.text =
-                    "Min. " + main.getString("temp_min").dropLast(2) + "°C Max. " + main.getString("temp_max").dropLast(2) + "°C"
+                    "Max. " + main.getString("temp_max").dropLast(3) + "°C Min. " + main.getString("temp_min").dropLast(3) + "°C"
 
             }
         }
