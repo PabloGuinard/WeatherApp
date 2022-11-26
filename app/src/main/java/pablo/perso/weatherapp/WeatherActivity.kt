@@ -22,6 +22,8 @@ import java.time.format.FormatStyle
 import java.util.*
 import javax.net.ssl.HttpsURLConnection
 import kotlin.collections.ArrayList
+import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.math.roundToInt
 
 
@@ -158,10 +160,12 @@ class WeatherActivity : AppCompatActivity() {
                 humidityTv.text = main.getString("humidity") + "%"
                 pressureTv.text = main.getString("pressure") + "hPa"
                 windTv.text = current.getJSONObject("wind").getString("speed") + "m/s"
-                windDirectionTv.text = current.getJSONObject("wind").getString("deg") + "°"
+                windDirectionTv.text = getWindDirection(current.getJSONObject("wind").getDouble("deg"))
                 val simpleHourFormat = SimpleDateFormat("HH:mm")
-                sunriseTv.text = simpleHourFormat.format(current.getJSONObject("sys").getInt("sunrise") * 1000L)
-                sunsetTv.text = simpleHourFormat.format(current.getJSONObject("sys").getInt("sunset") * 1000L)
+                sunriseTv.text =
+                    simpleHourFormat.format(current.getJSONObject("sys").getInt("sunrise") * 1000L)
+                sunsetTv.text =
+                    simpleHourFormat.format(current.getJSONObject("sys").getInt("sunset") * 1000L)
             }
         }
 
@@ -180,9 +184,12 @@ class WeatherActivity : AppCompatActivity() {
 
                 val minMaxTempTv = findViewById<TextView>(R.id.tv_min_max_temp)
 
-                minMaxTempTv.text = "Max. " + (list[0] as JSONObject).getJSONObject("temp").getDouble("max").roundToInt()
-                    .toString() + "°C Min. " + (list[0] as JSONObject).getJSONObject("temp").getDouble("min").roundToInt()
-                    .toString() + "°C"
+                minMaxTempTv.text =
+                    "Max. " + (list[0] as JSONObject).getJSONObject("temp").getDouble("max")
+                        .roundToInt()
+                        .toString() + "°C Min. " + (list[0] as JSONObject).getJSONObject("temp")
+                        .getDouble("min").roundToInt()
+                        .toString() + "°C"
                 list.remove(0)
 
                 for (i in 0..6) {
@@ -253,5 +260,26 @@ class WeatherActivity : AppCompatActivity() {
         iconArray.add(findViewById(R.id.icon_5))
         iconArray.add(findViewById(R.id.icon_6))
         return iconArray
+    }
+
+    private fun getWindDirection(angle: Double): String {
+        when (floor(angle / 22.5)) {
+            0.0 -> return getString(R.string.north)
+            1.0 -> return getString(R.string.north) + getString(R.string.north) + getString(R.string.east)
+            2.0 -> return getString(R.string.north) + getString(R.string.east)
+            3.0 -> return getString(R.string.east)
+            4.0 -> return getString(R.string.south) + getString(R.string.east) + getString(R.string.east)
+            5.0 -> return getString(R.string.south) + getString(R.string.east)
+            6.0 -> return getString(R.string.south) + getString(R.string.south) + getString(R.string.east)
+            7.0 -> return getString(R.string.south)
+            8.0 -> return getString(R.string.south) + getString(R.string.south) + getString(R.string.west)
+            9.0 -> return getString(R.string.south) + getString(R.string.west)
+            10.0 -> return getString(R.string.south) + getString(R.string.west) + getString(R.string.west)
+            11.0 -> return getString(R.string.west)
+            12.0 -> return getString(R.string.north) + getString(R.string.west) + getString(R.string.west)
+            13.0 -> return getString(R.string.north) + getString(R.string.west)
+            14.0 -> return getString(R.string.north) + getString(R.string.north) + getString(R.string.west)
+        }
+        return "0"
     }
 }

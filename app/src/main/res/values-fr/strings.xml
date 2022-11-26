@@ -14,4 +14,8 @@
     <string name="direction">Direction</string>
     <string name="sunrise">Lever</string>
     <string name="sunset">Coucher</string>
+    <string name="north">N</string>
+    <string name="south">S</string>
+    <string name="east">E</string>
+    <string name="west">O</string>
 </resources>
