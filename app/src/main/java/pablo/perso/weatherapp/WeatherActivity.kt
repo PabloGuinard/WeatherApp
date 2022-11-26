@@ -131,6 +131,13 @@ class WeatherActivity : AppCompatActivity() {
                 val feelsLikeTv = findViewById<TextView>(R.id.tv_feels_like)
                 val timeTv = findViewById<TextView>(R.id.tv_time)
 
+                val humidityTv = findViewById<TextView>(R.id.tv_humidity)
+                val pressureTv = findViewById<TextView>(R.id.tv_pressure)
+                val windTv = findViewById<TextView>(R.id.tv_wind)
+                val windDirectionTv = findViewById<TextView>(R.id.tv_wind_direction)
+                val sunriseTv = findViewById<TextView>(R.id.tv_sunrise)
+                val sunsetTv = findViewById<TextView>(R.id.tv_sunset)
+
                 val weatherIcon = findViewById<ImageView>(R.id.weather_icon)
                 weatherIcon.setImageBitmap(bmp)
 
@@ -148,7 +155,13 @@ class WeatherActivity : AppCompatActivity() {
                 val simpleDateFormat = SimpleDateFormat("dd MMM HH:mm")
                 timeTv.text = simpleDateFormat.format(current.getInt("dt") * 1000L + 3600000)
 
-
+                humidityTv.text = main.getString("humidity") + "%"
+                pressureTv.text = main.getString("pressure") + "hPa"
+                windTv.text = current.getJSONObject("wind").getString("speed") + "m/s"
+                windDirectionTv.text = current.getJSONObject("wind").getString("deg") + "°"
+                val simpleHourFormat = SimpleDateFormat("HH:mm")
+                sunriseTv.text = simpleHourFormat.format(current.getJSONObject("sys").getInt("sunrise") * 1000L)
+                sunsetTv.text = simpleHourFormat.format(current.getJSONObject("sys").getInt("sunset") * 1000L)
             }
         }
 
@@ -166,10 +179,10 @@ class WeatherActivity : AppCompatActivity() {
                 val list = forecast.getJSONArray("list")
 
                 val minMaxTempTv = findViewById<TextView>(R.id.tv_min_max_temp)
+
                 minMaxTempTv.text = "Max. " + (list[0] as JSONObject).getJSONObject("temp").getDouble("max").roundToInt()
                     .toString() + "°C Min. " + (list[0] as JSONObject).getJSONObject("temp").getDouble("min").roundToInt()
                     .toString() + "°C"
-
                 list.remove(0)
 
                 for (i in 0..6) {
