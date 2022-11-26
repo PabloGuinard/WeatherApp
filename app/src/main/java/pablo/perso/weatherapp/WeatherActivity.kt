@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.*
 import javax.net.ssl.HttpsURLConnection
+import kotlin.collections.ArrayList
 
 
 private const val APP_ID = "e3e837e5209e992789a2b21059048d7d"
@@ -28,7 +29,7 @@ private val ICON_URL = arrayOf("https://openweathermap.org/img/wn/", "@2x.png")
 
 class WeatherActivity : AppCompatActivity() {
 
-    private val city = "Lyon"
+    private val city = "londres"
     private val lang = "fr"
     private val unit = "metric"
 
@@ -38,6 +39,7 @@ class WeatherActivity : AppCompatActivity() {
         setContentView(R.layout.activity_weather)
 
         fetchWeather().start()
+        fetchForecast().start()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -47,29 +49,24 @@ class WeatherActivity : AppCompatActivity() {
                 "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=" + unit + "&cnt=7&appid=" + APP_ID + "&lang=" + lang
             )
             val connection = url.openConnection() as HttpsURLConnection
-            val urlForecast = URL(
-                "https://api.openweathermap.org/data/2.5/forecast/daily?q=" + city + "&units=" + unit + "&cnt=7&appid=" + APP_ID + "&lang=" + lang
-            )
-            val connectionForecast = urlForecast.openConnection() as HttpsURLConnection
 
-
-            if (connection.responseCode == 200 && connectionForecast.responseCode == 200) {
+            if (connection.responseCode == 200) {
                 val inputSystem = connection.inputStream
                 val inputStreamReader = InputStreamReader(inputSystem, "UTF-8")
                 val response = JSONObject(inputStreamReader.readText())
 
-                val inputSystemForecast = connectionForecast.inputStream
-                val inputStreamReaderForecast = InputStreamReader(inputSystemForecast, "UTF-8")
-                val responseForecast = JSONObject(inputStreamReaderForecast.readText())
-
-                val urlIcon = URL(ICON_URL.get(0) + (response.getJSONArray("weather")[0] as JSONObject).getString("icon") + ICON_URL.get(1))
+                val urlIcon = URL(
+                    ICON_URL.get(0) + (response.getJSONArray("weather")[0] as JSONObject).getString(
+                        "icon"
+                    ) + ICON_URL.get(1)
+                )
 
                 val connectionIcon = urlIcon.openConnection() as HttpsURLConnection
-                if(connection.responseCode == 200){
+                if (connection.responseCode == 200) {
                     val inputStreamIcon = connectionIcon.inputStream
                     val bmp = BitmapFactory.decodeStream(inputStreamIcon)
 
-                    updateUITodayWeather(response, responseForecast, bmp)
+                    updateUITodayWeather(response, bmp)
 
                     inputStreamIcon.close()
 
@@ -79,9 +76,44 @@ class WeatherActivity : AppCompatActivity() {
 
                 inputStreamReader.close()
                 inputSystem.close()
+            } else {
+                Log.d("error : ", "error")
+            }
+        }
+    }
 
-                inputStreamReaderForecast.close()
-                inputSystemForecast.close()
+    private fun fetchForecast(): Thread {
+        return Thread {
+            val url = URL(
+                "https://api.openweathermap.org/data/2.5/forecast/daily?q=" + city + "&units=" + unit + "&cnt=8&appid=" + APP_ID + "&lang=" + lang
+            )
+            val connection = url.openConnection() as HttpsURLConnection
+            if (connection.responseCode == 200) {
+                val inputSystem = connection.inputStream
+                val inputStreamReader = InputStreamReader(inputSystem, "UTF-8")
+                val response = JSONObject(inputStreamReader.readText())
+
+                val bmpArray = ArrayList<Bitmap?>()
+                for (i in 1..7) {
+                    val urlIcon = URL(
+                        ICON_URL.get(0) + ((response.getJSONArray("list")[i] as JSONObject).getJSONArray(
+                            "weather"
+                        )[0] as JSONObject).getString(
+                            "icon"
+                        ) + ICON_URL.get(1)
+                    )
+
+                    val connectionIcon = urlIcon.openConnection() as HttpsURLConnection
+                    if (connection.responseCode == 200) {
+                        val inputStreamIcon = connectionIcon.inputStream
+                        bmpArray.add(BitmapFactory.decodeStream(inputStreamIcon))
+                        inputStreamIcon.close()
+                    } else
+                        bmpArray.add(null)
+                }
+                updateUIForecast(response, bmpArray)
+                inputStreamReader.close()
+                inputSystem.close()
             } else {
                 Log.d("error : ", "error")
             }
@@ -90,7 +122,7 @@ class WeatherActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
-    private fun updateUITodayWeather(current: JSONObject, forecast: JSONObject, bmp :Bitmap) {
+    private fun updateUITodayWeather(current: JSONObject, bmp: Bitmap) {
         runOnUiThread {
             kotlin.run {
                 val cityTv = findViewById<TextView>(R.id.tv_city_name)
@@ -111,14 +143,99 @@ class WeatherActivity : AppCompatActivity() {
                 weatherDescTv.text = weather.getString("description")
                     .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
                 minMaxTempTv.text =
-                    "Max. " + main.getString("temp_max").dropLast(3) + "°C Min. " + main.getString("temp_min").dropLast(3) + "°C"
-                feelsLikeTv.text = getString(R.string.feels_like) + " " + main.getString("feels_like").dropLast(3) + "°C"
+                    "Max. " + main.getString("temp_max")
+                        .dropLast(3) + "°C Min. " + main.getString("temp_min").dropLast(3) + "°C"
+                feelsLikeTv.text =
+                    getString(R.string.feels_like) + " " + main.getString("feels_like")
+                        .dropLast(3) + "°C"
 
                 val simpleDateFormat = SimpleDateFormat("dd MMM HH:mm")
                 timeTv.text = simpleDateFormat.format(current.getInt("dt") * 1000L + 3600000)
 
+
             }
         }
 
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun updateUIForecast(forecast: JSONObject, bmpArray: ArrayList<Bitmap?>) {
+        runOnUiThread {
+            kotlin.run {
+                val timeTvArray = getForecastTimeTv()
+                val minMaxTvArray = getForecastMinMaxTv()
+                val descTvArray = getForecastDescTv()
+                val iconsArray = getForecastIcons()
+
+                val list = forecast.getJSONArray("list")
+                list.remove(0)
+
+                for (i in 0..6) {
+                    val simpleDateFormat = SimpleDateFormat("EE dd/MM")
+                    timeTvArray[i].text = simpleDateFormat.format((list[i] as JSONObject).getInt("dt") * 1000L + 3600000)
+                        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                    minMaxTvArray[i].text =
+                        "Max. " + (list[i] as JSONObject).getJSONObject("temp")
+                            .getString("max")
+                            .dropLast(3) + "°C Min. " + (list[i] as JSONObject).getJSONObject("temp")
+                            .getString("min").dropLast(3) + "°C"
+
+                    descTvArray[i].text =
+                        ((list[i] as JSONObject).getJSONArray("weather")[0] as JSONObject).getString(
+                            "description"
+                        )
+                    iconsArray[i].setImageBitmap(bmpArray[i])
+                }
+
+            }
+        }
+    }
+
+    private fun getForecastTimeTv(): kotlin.collections.ArrayList<TextView> {
+        val timeTvArray = kotlin.collections.ArrayList<TextView>()
+        timeTvArray.add(findViewById(R.id.tv_date_0))
+        timeTvArray.add(findViewById(R.id.tv_date_1))
+        timeTvArray.add(findViewById(R.id.tv_date_2))
+        timeTvArray.add(findViewById(R.id.tv_date_3))
+        timeTvArray.add(findViewById(R.id.tv_date_4))
+        timeTvArray.add(findViewById(R.id.tv_date_5))
+        timeTvArray.add(findViewById(R.id.tv_date_6))
+        return timeTvArray
+    }
+
+    private fun getForecastMinMaxTv(): kotlin.collections.ArrayList<TextView> {
+        val minMaxTvArray = kotlin.collections.ArrayList<TextView>()
+        minMaxTvArray.add(findViewById(R.id.tv_min_max_0))
+        minMaxTvArray.add(findViewById(R.id.tv_min_max_1))
+        minMaxTvArray.add(findViewById(R.id.tv_min_max_2))
+        minMaxTvArray.add(findViewById(R.id.tv_min_max_3))
+        minMaxTvArray.add(findViewById(R.id.tv_min_max_4))
+        minMaxTvArray.add(findViewById(R.id.tv_min_max_5))
+        minMaxTvArray.add(findViewById(R.id.tv_min_max_6))
+        return minMaxTvArray
+    }
+
+    private fun getForecastDescTv(): kotlin.collections.ArrayList<TextView> {
+        val descTvArray = kotlin.collections.ArrayList<TextView>()
+        descTvArray.add(findViewById(R.id.desc_0))
+        descTvArray.add(findViewById(R.id.desc_1))
+        descTvArray.add(findViewById(R.id.desc_2))
+        descTvArray.add(findViewById(R.id.desc_3))
+        descTvArray.add(findViewById(R.id.desc_4))
+        descTvArray.add(findViewById(R.id.desc_5))
+        descTvArray.add(findViewById(R.id.desc_6))
+        return descTvArray
+    }
+
+    private fun getForecastIcons(): kotlin.collections.ArrayList<ImageView> {
+        val iconArray = kotlin.collections.ArrayList<ImageView>()
+        iconArray.add(findViewById(R.id.icon_0))
+        iconArray.add(findViewById(R.id.icon_1))
+        iconArray.add(findViewById(R.id.icon_2))
+        iconArray.add(findViewById(R.id.icon_3))
+        iconArray.add(findViewById(R.id.icon_4))
+        iconArray.add(findViewById(R.id.icon_5))
+        iconArray.add(findViewById(R.id.icon_6))
+        return iconArray
     }
 }
