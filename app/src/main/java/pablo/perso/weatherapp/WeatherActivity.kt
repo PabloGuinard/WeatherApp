@@ -22,6 +22,7 @@ import java.time.format.FormatStyle
 import java.util.*
 import javax.net.ssl.HttpsURLConnection
 import kotlin.collections.ArrayList
+import kotlin.math.roundToInt
 
 
 private const val APP_ID = "e3e837e5209e992789a2b21059048d7d"
@@ -96,11 +97,11 @@ class WeatherActivity : AppCompatActivity() {
                 val bmpArray = ArrayList<Bitmap?>()
                 for (i in 1..7) {
                     val urlIcon = URL(
-                        ICON_URL.get(0) + ((response.getJSONArray("list")[i] as JSONObject).getJSONArray(
+                        ICON_URL[0] + ((response.getJSONArray("list")[i] as JSONObject).getJSONArray(
                             "weather"
                         )[0] as JSONObject).getString(
                             "icon"
-                        ) + ICON_URL.get(1)
+                        ) + ICON_URL[1]
                     )
 
                     val connectionIcon = urlIcon.openConnection() as HttpsURLConnection
@@ -108,8 +109,7 @@ class WeatherActivity : AppCompatActivity() {
                         val inputStreamIcon = connectionIcon.inputStream
                         bmpArray.add(BitmapFactory.decodeStream(inputStreamIcon))
                         inputStreamIcon.close()
-                    } else
-                        bmpArray.add(null)
+                    } else bmpArray.add(null)
                 }
                 updateUIForecast(response, bmpArray)
                 inputStreamReader.close()
@@ -139,15 +139,15 @@ class WeatherActivity : AppCompatActivity() {
                 val main = current.getJSONObject("main")
 
                 cityTv.text = current.getString("name")
-                currentTempTv.text = main.getString("temp").dropLast(3) + "°C"
+                currentTempTv.text = main.getDouble("temp").roundToInt().toString() + "°C"
                 weatherDescTv.text = weather.getString("description")
                     .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
-                minMaxTempTv.text =
-                    "Max. " + main.getString("temp_max")
-                        .dropLast(3) + "°C Min. " + main.getString("temp_min").dropLast(3) + "°C"
+                minMaxTempTv.text = "Max. " + main.getDouble("temp_max").roundToInt()
+                    .toString() + "°C Min. " + main.getDouble("temp_min").roundToInt()
+                    .toString() + "°C"
                 feelsLikeTv.text =
-                    getString(R.string.feels_like) + " " + main.getString("feels_like")
-                        .dropLast(3) + "°C"
+                    getString(R.string.feels_like) + " " + main.getDouble("feels_like").roundToInt()
+                        .toString() + "°C"
 
                 val simpleDateFormat = SimpleDateFormat("dd MMM HH:mm")
                 timeTv.text = simpleDateFormat.format(current.getInt("dt") * 1000L + 3600000)
@@ -172,13 +172,14 @@ class WeatherActivity : AppCompatActivity() {
 
                 for (i in 0..6) {
                     val simpleDateFormat = SimpleDateFormat("EE dd/MM")
-                    timeTvArray[i].text = simpleDateFormat.format((list[i] as JSONObject).getInt("dt") * 1000L + 3600000)
-                        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                    timeTvArray[i].text =
+                        simpleDateFormat.format((list[i] as JSONObject).getInt("dt") * 1000L + 3600000)
+                            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
                     minMaxTvArray[i].text =
-                        "Max. " + (list[i] as JSONObject).getJSONObject("temp")
-                            .getString("max")
-                            .dropLast(3) + "°C Min. " + (list[i] as JSONObject).getJSONObject("temp")
-                            .getString("min").dropLast(3) + "°C"
+                        "Max. " + (list[i] as JSONObject).getJSONObject("temp").getDouble("max")
+                            .roundToInt()
+                            .toString() + "°C Min. " + (list[i] as JSONObject).getJSONObject("temp")
+                            .getDouble("min").roundToInt().toString() + "°C"
 
                     descTvArray[i].text =
                         ((list[i] as JSONObject).getJSONArray("weather")[0] as JSONObject).getString(
