@@ -10,4 +10,10 @@
     <string name="time" translatable="false">00.00</string>
     <string name="forecast">7 days forecast</string>
     <string name="date" translatable="false">00/00</string>
+    <string name="humidity">Humidity</string>
+    <string name="pressure">Pressure</string>
+    <string name="wind">Wind</string>
+    <string name="direction">Direction</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
 </resources>

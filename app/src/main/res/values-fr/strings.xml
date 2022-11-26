@@ -8,4 +8,10 @@
     <string name="weather_title">Météo</string>
     <string name="feels_like">Ressenti</string>
     <string name="forecast">Prévisions sur 7 jours</string>
+    <string name="humidity">Humidité</string>
+    <string name="pressure">Pression</string>
+    <string name="wind">Vent</string>
+    <string name="direction">Direction</string>
+    <string name="sunrise">Lever</string>
+    <string name="sunset">Coucher</string>
 </resources>
