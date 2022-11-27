@@ -6,21 +6,23 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
 import android.text.InputType
-import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.SearchView
 import android.widget.SearchView.OnQueryTextListener
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import kotlinx.coroutines.*
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 val INTENT_CITY = "city"
@@ -75,11 +77,21 @@ class MainActivity : AppCompatActivity() {
 
         })
 
-        listView.setOnItemClickListener { adapterView, view, i, l ->
+        listView.setOnItemClickListener { adapterView, view, pos, id ->
             val intent = Intent(this, WeatherActivity::class.java)
-            intent.putExtra(INTENT_CITY, lvContent.get(i))
+            intent.putExtra(INTENT_CITY, lvContent.get(pos))
             startActivity(intent)
         }
+
+        listView.setOnItemLongClickListener { adapterView, view, pos, id ->
+            runOnUiThread{
+                lvContent.removeAt(pos)
+                arrayAdapter.notifyDataSetChanged()
+                runBlocking { launch { saveSearchesToPreferencesStore(lvContent) } }
+            }
+            true
+        }
+
     }
 
     private suspend fun saveSearchesToPreferencesStore(searches: ArrayList<String>) {
