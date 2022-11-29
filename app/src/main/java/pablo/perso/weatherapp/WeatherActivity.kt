@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
-import android.text.format.DateFormat
 import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
@@ -15,14 +14,9 @@ import org.json.JSONObject
 import java.io.InputStreamReader
 import java.net.URL
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.util.*
 import javax.net.ssl.HttpsURLConnection
 import kotlin.collections.ArrayList
-import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
@@ -40,7 +34,6 @@ class WeatherActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weather)
-        val bundle: Bundle? = intent.extras
         city = intent.getStringExtra(INTENT_CITY).toString()
 
 
@@ -76,8 +69,6 @@ class WeatherActivity : AppCompatActivity() {
 
                     inputStreamIcon.close()
 
-                } else {
-                    //TODO
                 }
 
                 inputStreamReader.close()
@@ -126,7 +117,7 @@ class WeatherActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "SimpleDateFormat")
     private fun updateUITodayWeather(current: JSONObject, bmp: Bitmap) {
         runOnUiThread {
             kotlin.run {
@@ -174,7 +165,7 @@ class WeatherActivity : AppCompatActivity() {
 
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "SimpleDateFormat")
     private fun updateUIForecast(forecast: JSONObject, bmpArray: ArrayList<Bitmap?>) {
         runOnUiThread {
             kotlin.run {
@@ -217,7 +208,7 @@ class WeatherActivity : AppCompatActivity() {
         }
     }
 
-    private fun getForecastTimeTv(): kotlin.collections.ArrayList<TextView> {
+    private fun getForecastTimeTv(): ArrayList<TextView> {
         val timeTvArray = kotlin.collections.ArrayList<TextView>()
         timeTvArray.add(findViewById(R.id.tv_date_0))
         timeTvArray.add(findViewById(R.id.tv_date_1))
@@ -229,7 +220,7 @@ class WeatherActivity : AppCompatActivity() {
         return timeTvArray
     }
 
-    private fun getForecastMinMaxTv(): kotlin.collections.ArrayList<TextView> {
+    private fun getForecastMinMaxTv(): ArrayList<TextView> {
         val minMaxTvArray = kotlin.collections.ArrayList<TextView>()
         minMaxTvArray.add(findViewById(R.id.tv_min_max_0))
         minMaxTvArray.add(findViewById(R.id.tv_min_max_1))
@@ -241,7 +232,7 @@ class WeatherActivity : AppCompatActivity() {
         return minMaxTvArray
     }
 
-    private fun getForecastDescTv(): kotlin.collections.ArrayList<TextView> {
+    private fun getForecastDescTv(): ArrayList<TextView> {
         val descTvArray = kotlin.collections.ArrayList<TextView>()
         descTvArray.add(findViewById(R.id.desc_0))
         descTvArray.add(findViewById(R.id.desc_1))
@@ -253,7 +244,7 @@ class WeatherActivity : AppCompatActivity() {
         return descTvArray
     }
 
-    private fun getForecastIcons(): kotlin.collections.ArrayList<ImageView> {
+    private fun getForecastIcons(): ArrayList<ImageView> {
         val iconArray = kotlin.collections.ArrayList<ImageView>()
         iconArray.add(findViewById(R.id.icon_0))
         iconArray.add(findViewById(R.id.icon_1))
