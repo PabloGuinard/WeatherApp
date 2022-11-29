@@ -32,7 +32,7 @@ private val ICON_URL = arrayOf("https://openweathermap.org/img/wn/", "@2x.png")
 
 class WeatherActivity : AppCompatActivity() {
 
-    private val city = "london"
+    private var city = ""
     private val lang = "fr"
     private val unit = "metric"
 
@@ -40,6 +40,9 @@ class WeatherActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weather)
+        val bundle: Bundle? = intent.extras
+        city = intent.getStringExtra(INTENT_CITY).toString()
+
 
         fetchWeather().start()
         fetchForecast().start()

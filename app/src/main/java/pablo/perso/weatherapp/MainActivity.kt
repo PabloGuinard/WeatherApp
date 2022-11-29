@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 
-val INTENT_CITY = "city"
+const val INTENT_CITY = "city"
 val RECENT_SEARCHES = stringPreferencesKey("recent_searches")
 
 class MainActivity : AppCompatActivity() {
@@ -77,13 +77,13 @@ class MainActivity : AppCompatActivity() {
 
         })
 
-        listView.setOnItemClickListener { adapterView, view, pos, id ->
+        listView.setOnItemClickListener { _, _, pos, _ ->
             val intent = Intent(this, WeatherActivity::class.java)
-            intent.putExtra(INTENT_CITY, lvContent.get(pos))
+            intent.putExtra(INTENT_CITY, lvContent[pos])
             startActivity(intent)
         }
 
-        listView.setOnItemLongClickListener { adapterView, view, pos, id ->
+        listView.setOnItemLongClickListener { _, _, pos, _ ->
             runOnUiThread{
                 lvContent.removeAt(pos)
                 arrayAdapter.notifyDataSetChanged()
